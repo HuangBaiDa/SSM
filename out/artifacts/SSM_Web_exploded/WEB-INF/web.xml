@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+	<display-name>SSM</display-name>
+	<welcome-file-list>
+		<welcome-file>login.jsp</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- 配置spring -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+
+	<!-- 当 springMVC配置文件中  通过注解引入了spring的配置文件时，则可以配置spring的xml配置文件-->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml;classpath:spring-mybatis.xml</param-value>
+	</context-param>
+
+	<!--
+	       servlet标准不允许在web容器内自行做线程管理
+	         主要负责处理由　JavaBeans Introspector的使用而引起的缓冲泄露。清除Introspector的唯一方式是刷新整个缓冲
+	 -->
+	<!--<listener>
+	  <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>  -->
+
+	<!-- 配置springMVC -->
+	<servlet>
+		<servlet-name>springDispatcherServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-MVC.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- 拦截路径 -->
+	<servlet-mapping>
+		<servlet-name>springDispatcherServlet</servlet-name>
+		<!--<url-pattern>*.do</url-pattern>-->
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+	<!-- 设置根目录 -->
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>webapp.root</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j.properties</param-value>
+	</context-param>
+	<!-- 3000表示 开一条watchdog线程每60秒扫描一下配置文件的变化;这样便于日志存放位置的改变 -->
+	<context-param>
+		<param-name>log4jRefreshInterval</param-name>
+		<param-value>3000</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
+
+
+	<!-- 中文编码过滤器 -->
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!--
+	        Session是由浏览器和服务器之间维护的。
+	        Session超时理解为：浏览器和服务器之间创建了一个Session，由于客户端长时间（休眠时间）没有与服务器交互，
+	            服务器将此Session销毁，客户端再一次与服务器交互时之前的Session就不存在了。
+	 -->
+	<session-config>
+		<session-timeout>15</session-timeout>
+	</session-config>
+</web-app>
